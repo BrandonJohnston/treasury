@@ -1,0 +1,28 @@
+{
+	"data": [
+		{
+			"effectiveDate": "2024-07-12T12:29:13Z",
+			"name": "Sushi Palace",
+			"amount": 123.99,
+			"type": "direct transfer",
+			"direction": "withdrawl",
+			"memo": "Pay for lunch"
+		},
+		{
+			"effectiveDate": "2024-07-10T17:53:27Z",
+			"name": "Gas 4 Carz",
+			"amount": 53.17,
+			"type": "direct transfer",
+			"direction": "withdrawl",
+			"memo": "Gas station"
+		},
+		{
+			"effectiveDate": "2024-07-07T07:13:37Z",
+			"name": "My Contracting Co.",
+			"amount": 1377.09,
+			"type": "direct transfer",
+			"direction": "deposit",
+			"memo": "Paycheck"
+		}
+	]
+}
