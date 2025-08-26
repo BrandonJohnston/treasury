@@ -23,8 +23,32 @@ export default function Login() {
 	});
 
 	// Define submit handler
-	function onSubmit(values: z.infer<typeof formSchema>) {
+	async function onSubmit(values: z.infer<typeof formSchema>) {
 		console.log("onSubmit: ", values);
+		
+		try {
+			const response = await fetch('http://localhost:8080/api/auth/login', {
+				method: 'POST',
+				headers: {
+					'Content-Type': 'application/json',
+				},
+				body: JSON.stringify({
+					email: values.email,
+					password: values.password,
+				}),
+			});
+			
+			const data = await response.json();
+			console.log('Login response:', data);
+			
+			if (!response.ok) {
+				console.error('Login failed:', response.status, data);
+			} else {
+				console.log('Login successful:', data);
+			}
+		} catch (error) {
+			console.error('Login error:', error);
+		}
 	}
 
 	return (
@@ -55,7 +79,7 @@ export default function Login() {
 								   </FormItem>
 							   )}
 					/>
-					<Button type="submit" className="md:self-end cursor-pointer" disabled={!form.formState.isValid}>Submit</Button>
+					<Button type="submit" className="md:self-end cursor-pointer">Submit</Button>
 				</form>
 			</Form>
 		</div>
