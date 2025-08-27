@@ -1,6 +1,26 @@
-version: '3.8'
+#version: '3.8'
 
 services:
+    db:
+        image: postgres:15
+        container_name: postgres
+        environment:
+            POSTGRES_USER: postgres
+            POSTGRES_PASSWORD: password
+            POSTGRES_DB: treasury
+        volumes:
+            - pgdata:/var/lib/postgresql/data
+        ports:
+            - "5432:5432"
+        networks:
+            - app-network
+        # healthcheck:
+        #     test: ["CMD-SHELL", "pg_isready -U postgres -d treasury"]
+        #     interval: 10s
+        #     timeout: 5s
+        #     retries: 3
+        #     start_period: 30s
+
     web-backend:
         build:
             context: ./apps/web-backend
@@ -9,10 +29,18 @@ services:
             - "8080:8080"
         environment:
             - PORT=8080
+            - DB_HOST=db
+            - DB_PORT=5432
+            - DB_USER=postgres
+            - DB_PASSWORD=password
+            - DB_NAME=treasury
+            - DB_SSLMODE=disable
         volumes:
             - ./apps/web-backend:/app
         networks:
             - app-network
+        depends_on:
+            - db
 
     web-frontend:
         build:
@@ -27,7 +55,7 @@ services:
         environment:
             # Add environment variables if needed, e.g., for API endpoints
             - NODE_ENV=development
-            - NEXT_PUBLIC_API_URL=http://localhost:8000
+            - NEXT_PUBLIC_API_URL=http://localhost:8080
         networks:
             - app-network
         depends_on:
@@ -36,3 +64,6 @@ services:
 networks:
     app-network:
         driver: bridge
+
+volumes:
+    pgdata:

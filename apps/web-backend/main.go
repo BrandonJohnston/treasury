@@ -5,11 +5,33 @@ import (
 
 	"github.com/gofiber/fiber/v2"
 	"github.com/gofiber/fiber/v2/middleware/cors"
+	"github.com/joho/godotenv"
 
+	"web-backend/config"
+	"web-backend/database"
 	"web-backend/routes"
 )
 
 func main() {
+	// Load environment variables
+	if err := godotenv.Load(); err != nil {
+		log.Println("No .env file found, using default environment variables")
+	}
+
+	// Load configuration
+	cfg := config.Load()
+
+	// Initialize database
+	if err := database.Connect(cfg); err != nil {
+		log.Fatal("Failed to connect to database:", err)
+	}
+	defer database.Close()
+
+	// Initialize database tables
+	if err := database.InitTables(); err != nil {
+		log.Fatal("Failed to initialize database tables:", err)
+	}
+
 	app := fiber.New()
 
 	// Enable CORS for all routes
@@ -21,5 +43,6 @@ func main() {
 
 	routes.SetupRoutes(app)
 
+	log.Println("Server starting on :8080")
 	log.Fatal(app.Listen(":8080"))
 }
