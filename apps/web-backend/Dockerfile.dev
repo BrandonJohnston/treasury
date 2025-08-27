@@ -1,0 +1,20 @@
+# Build stage
+FROM golang:1.25 as builder
+
+WORKDIR /
+
+COPY . .
+
+# RUN go build -o 
+# Build static binary
+RUN CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -o main .
+
+# Runtime stage
+FROM debian:bullseye-slim
+
+WORKDIR /
+
+COPY --from=builder /main .
+
+EXPOSE 8080
+CMD ["./main"]

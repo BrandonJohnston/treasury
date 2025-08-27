@@ -1,17 +1,23 @@
 version: '3.8'
 
 services:
-#    backend:
-#        build: ./apps/web-backend
-#        container_name: go-backend
-#        ports:
-#            - "8080:8080"
-#        restart: unless-stopped
+    web-backend:
+        build:
+            context: ./apps/web-backend
+            dockerfile: Dockerfile.dev
+        ports:
+            - "8080:8080"
+        environment:
+            - PORT=8080
+        volumes:
+            - ./apps/web-backend:/app
+        networks:
+            - app-network
 
-    frontend:
+    web-frontend:
         build:
             context: ./apps/web-frontend # Build from the current directory
-            dockerfile: Dockerfile
+            dockerfile: Dockerfile.dev
         volumes:
             - ./apps/web-frontend:/app # Mount the local project directory to /app in the container
             - /app/node_modules # Create a separate volume for node_modules to prevent host's node_modules from overwriting container's
@@ -22,5 +28,11 @@ services:
             # Add environment variables if needed, e.g., for API endpoints
             - NODE_ENV=development
             - NEXT_PUBLIC_API_URL=http://localhost:8000
-#        depends_on:
-#            -   backend
+        networks:
+            - app-network
+        depends_on:
+            - web-backend
+
+networks:
+    app-network:
+        driver: bridge
