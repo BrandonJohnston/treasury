@@ -27,11 +27,6 @@ func main() {
 	}
 	defer database.Close()
 
-	// Initialize database tables
-	if err := database.InitTables(); err != nil {
-		log.Fatal("Failed to initialize database tables:", err)
-	}
-
 	app := fiber.New()
 
 	// Enable CORS for all routes

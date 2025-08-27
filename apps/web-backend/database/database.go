@@ -39,25 +39,3 @@ func Close() error {
 	}
 	return nil
 }
-
-// InitTables creates the necessary database tables
-func InitTables() error {
-	// Create users table
-	createUsersTable := `
-	CREATE TABLE IF NOT EXISTS users (
-		id SERIAL PRIMARY KEY,
-		email VARCHAR(255) UNIQUE NOT NULL,
-		password_hash VARCHAR(255) NOT NULL,
-		name VARCHAR(255) NOT NULL,
-		created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-		updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-	);`
-
-	_, err := DB.Exec(createUsersTable)
-	if err != nil {
-		return fmt.Errorf("error creating users table: %v", err)
-	}
-
-	log.Println("Database tables initialized successfully")
-	return nil
-}

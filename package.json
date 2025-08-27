@@ -5,6 +5,8 @@
 		"apps/frontend"
 	],
 	"scripts": {
-		"dev": "docker-compose up --build"
+		"dev": "docker-compose up --build",
+		"db:reset": "cd apps/web-backend && ./scripts/reset-db.sh",
+		"db:migrate": "cd apps/web-backend && go run migrations/migrate.go"
 	}
 }
