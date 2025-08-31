@@ -35,6 +35,7 @@ services:
             - DB_PASSWORD=password
             - DB_NAME=treasury
             - DB_SSLMODE=disable
+        restart: on-failure
         volumes:
             - ./apps/web-backend:/app
         networks:

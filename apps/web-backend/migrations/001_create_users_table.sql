@@ -35,4 +35,5 @@ CREATE TRIGGER update_users_updated_at
 -- Insert some sample data (optional, for development)
 INSERT INTO users (email, password_hash, name) VALUES
     ('admin@treasury.com', '$2a$10$example_hash_here', 'Admin User'),
-    ('user@treasury.com', '$2a$10$example_hash_here', 'Test User');
+    ('user@treasury.com', '$2a$10$example_hash_here', 'Test User'),
+    ('test@test.com', 'testy', 'Test User');

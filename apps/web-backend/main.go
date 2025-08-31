@@ -2,14 +2,15 @@ package main
 
 import (
 	"log"
+	"net/http"
 
-	"github.com/gofiber/fiber/v2"
-	"github.com/gofiber/fiber/v2/middleware/cors"
 	"github.com/joho/godotenv"
 
-	"web-backend/config"
-	"web-backend/database"
-	"web-backend/routes"
+	"web-backend/internal/database"
+	"web-backend/internal/handler"
+	"web-backend/internal/repository"
+	"web-backend/internal/router"
+	"web-backend/internal/service"
 )
 
 func main() {
@@ -18,26 +19,18 @@ func main() {
 		log.Println("No .env file found, using default environment variables")
 	}
 
-	// Load configuration
-	cfg := config.Load()
-
-	// Initialize database
-	if err := database.Connect(cfg); err != nil {
-		log.Fatal("Failed to connect to database:", err)
+	db, err := database.SetupDB()
+	if err != nil {
+		log.Fatalf("Failed to connect to DB: %v", err)
 	}
-	defer database.Close()
+	defer db.Close()
 
-	app := fiber.New()
+	userRepo := repository.NewUserRepository(db)
+	userService := service.NewUserService(userRepo)
+	userHandler := handler.NewUserHandler(userService)
 
-	// Enable CORS for all routes
-	app.Use(cors.New(cors.Config{
-		AllowOrigins: "http://localhost:3000",
-		AllowHeaders: "Origin, Content-Type, Accept",
-		AllowMethods: "GET,POST,PUT,DELETE,OPTIONS",
-	}))
-
-	routes.SetupRoutes(app)
+	routes := router.SetupRoutes(userHandler)
 
 	log.Println("Server starting on :8080")
-	log.Fatal(app.Listen(":8080"))
+	log.Fatal(http.ListenAndServe(":8080", routes))
 }
