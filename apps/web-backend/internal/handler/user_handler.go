@@ -18,6 +18,11 @@ type AuthUserRequest struct {
 	Password string `json:"password"`
 }
 
+type ErrorResponse struct {
+	Message string `json:"message"`
+	Status  int    `json:"status"`
+}
+
 func NewUserHandler(service *service.UserService) *UserHandler {
 	return &UserHandler{service: service}
 }
@@ -39,12 +44,36 @@ func (h *UserHandler) LoginUser(w http.ResponseWriter, r *http.Request) {
 	}
 
 	user, err := h.service.GetUserByEmail(req.Email, req.Password)
+
+	// Error on db query
 	if err != nil {
-		http.Error(w, "server error", http.StatusInternalServerError)
+		// Write the error response to the client
+		w.Header().Set("Content-Type", "application/json")
+		w.WriteHeader(http.StatusInternalServerError)
+
+		// Send JSON response
+		response := ErrorResponse{
+			Message: "Internal server error",
+			Status:  http.StatusInternalServerError,
+		}
+
+		json.NewEncoder(w).Encode(response)
 		return
 	}
+
+	// User not found
 	if user == nil {
-		http.Error(w, "user not found", http.StatusNotFound)
+		// Write the error response to the client
+		w.Header().Set("Content-Type", "application/json")
+		w.WriteHeader(http.StatusUnauthorized)
+
+		// Send JSON response
+		response := ErrorResponse{
+			Message: "Invalid username or password",
+			Status:  http.StatusUnauthorized,
+		}
+
+		json.NewEncoder(w).Encode(response)
 		return
 	}
 

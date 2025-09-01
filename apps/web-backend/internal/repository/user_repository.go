@@ -29,9 +29,10 @@ func (r *UserRepository) GetUserByEmail(email string, password string) (*models.
 	query := `
 		SELECT id, email, password_hash, name, created_at, updated_at
 		FROM users
-		WHERE email = $1`
+		WHERE email = $1
+		AND password_hash = $2`
 
-	err := r.db.QueryRow(query, email).Scan(
+	err := r.db.QueryRow(query, email, password).Scan(
 		&user.ID, &user.Email, &user.PasswordHash, &user.Name, &user.CreatedAt, &user.UpdatedAt)
 
 	if err != nil {
