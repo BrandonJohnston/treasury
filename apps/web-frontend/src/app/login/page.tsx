@@ -25,7 +25,7 @@ export default function Login() {
 	// Define submit handler
 	async function onSubmit(values: z.infer<typeof formSchema>) {
 		console.log("onSubmit: ", values);
-		
+
 		try {
 			const response = await fetch('http://localhost:8080/api/auth/login', {
 				method: 'POST',
@@ -36,11 +36,12 @@ export default function Login() {
 					email: values.email,
 					password: values.password,
 				}),
+				credentials: "include",
 			});
-			
+
 			const data = await response.json();
 			console.log('Login response:', data);
-			
+
 			if (!response.ok) {
 				console.error('Login failed:', response.status, data);
 			} else {

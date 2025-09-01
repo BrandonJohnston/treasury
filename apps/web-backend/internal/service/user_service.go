@@ -1,7 +1,6 @@
 package service
 
 import (
-	"log"
 	"web-backend/internal/models"
 	"web-backend/internal/repository"
 )
@@ -15,6 +14,9 @@ func NewUserService(repo *repository.UserRepository) *UserService {
 }
 
 func (s *UserService) GetUserByEmail(email string, password string) (*models.User, error) {
-	log.Println("Service :: GetUserByEmail()")
 	return s.repo.GetUserByEmail(email, password)
+}
+
+func (s *UserService) GetUserByID(id int) (*models.User, error) {
+	return s.repo.GetUserByID(id)
 }
