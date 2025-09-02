@@ -1,4 +1,5 @@
 "use client";
+import { useRouter } from 'next/navigation';
 import { z } from 'zod';
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
@@ -12,6 +13,9 @@ const formSchema = z.object({
 });
 
 export default function Login() {
+	// Aliases
+	const router = useRouter();
+
 	// Define the form
 	const form = useForm<z.infer<typeof formSchema>>({
 		mode: "onBlur",
@@ -40,12 +44,11 @@ export default function Login() {
 			});
 
 			const data = await response.json();
-			console.log('Login response:', data);
 
-			if (!response.ok) {
-				console.error('Login failed:', response.status, data);
+			if (response.ok) {
+				router.push('/dashboard');
 			} else {
-				console.log('Login successful:', data);
+				console.error('Login failed:', response.status, data);
 			}
 		} catch (error) {
 			console.error('Login error:', error);
