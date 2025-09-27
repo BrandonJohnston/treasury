@@ -1,22 +1,18 @@
-import { NextResponse } from 'next/server';
-import type { NextRequest } from 'next/server';
+import type { NextRequest } from "next/server";
+import { auth0 } from "./lib/auth0";
 
-export function middleware(request: NextRequest) {
-	const sessionToken = request.cookies.get('session-name')?.value;
-
-	console.log("sessionToken", sessionToken);
-
-	if (!sessionToken) {
-		return NextResponse.redirect(new URL('/login', request.url));
-	}
-
-	if (request.nextUrl.pathname === '/login' && sessionToken) {
-		return NextResponse.redirect(new URL('/dashboard', request.url));
-	}
-
-	return NextResponse.next();
+export async function middleware(request: NextRequest) {
+  return await auth0.middleware(request);
 }
 
 export const config = {
-	matcher: ['/login', '/dashboard', '/dashboard/:path*'], // apply middleware only to these routes
+  matcher: [
+    /*
+     * Match all request paths except for the ones starting with:
+     * - _next/static (static files)
+     * - _next/image (image optimization files)
+     * - favicon.ico, sitemap.xml, robots.txt (metadata files)
+     */
+    "/((?!_next/static|_next/image|favicon.ico|sitemap.xml|robots.txt).*)",
+  ],
 };
