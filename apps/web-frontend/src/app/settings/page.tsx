@@ -1,7 +1,7 @@
 import { auth0 } from "@/lib/auth0";
 import { redirect } from "next/navigation";
 
-export default async function Dashboard() {
+export default async function Settings() {
 	// Aliases
 	//
 
@@ -13,7 +13,7 @@ export default async function Dashboard() {
 
 	return (
 		<div className="items-center justify-items-center w-full p-10">
-			dashboard protected route
+			Settings
 		</div>
 	);
 }
