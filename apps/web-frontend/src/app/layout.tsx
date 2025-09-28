@@ -35,7 +35,6 @@ export default async function RootLayout({
 }: Readonly<{
 	children: React.ReactNode;
 }>) {
-	const accessToken = await auth0.getAccessToken();
 	const session = await auth0.getSession();
 
 	if (session?.user) {
@@ -51,7 +50,6 @@ export default async function RootLayout({
 			const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/user`, {
 				method: 'POST',
 				headers: {
-					'Authorization': `Bearer ${accessToken}`,
 					'Content-Type': 'application/json',
 				},
 				body: JSON.stringify(payload),
