@@ -7,12 +7,13 @@ DROP TABLE IF EXISTS users CASCADE;
 
 -- Create users table
 CREATE TABLE users (
-    id SERIAL PRIMARY KEY,
-    email VARCHAR(255) UNIQUE NOT NULL,
-    password_hash VARCHAR(255) NOT NULL,
-    name VARCHAR(255) NOT NULL,
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    provider VARCHAR(50) NOT NULL,
+    provider_id VARCHAR(255) UNIQUE NOT NULL,
+    email VARCHAR(255) UNIQUE,
+    name VARCHAR(255),
+    created_at TIMESTAMP DEFAULT NOW() NOT NULL,
+    updated_at TIMESTAMP DEFAULT NOW() NOT NULL
 );
 
 -- Create index on email for faster lookups
@@ -32,8 +33,6 @@ CREATE TRIGGER update_users_updated_at
     FOR EACH ROW 
     EXECUTE FUNCTION update_updated_at_column();
 
--- Insert some sample data (optional, for development)
-INSERT INTO users (email, password_hash, name) VALUES
-    ('admin@treasury.com', '$2a$10$example_hash_here', 'Admin User'),
-    ('user@treasury.com', '$2a$10$example_hash_here', 'Test User'),
-    ('test@test.com', 'testy', 'Test User');
+-- Insert initial user data (for development/testing)
+INSERT INTO users (provider, provider_id, email, name) VALUES
+    ('google-oauth2', '113134860670558946522', 'test@test.com', 'Treasury Admin');

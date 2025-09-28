@@ -6,7 +6,7 @@ import {
     SidebarGroupAction,
 } from "@/components/ui/sidebar";
 import { Plus } from "lucide-react";
-  
+
 export default function AppSidebarAccountHeader() {
 
     const handleAddAccount = () => {

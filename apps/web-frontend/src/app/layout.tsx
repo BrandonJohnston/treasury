@@ -29,6 +29,24 @@ export default async function RootLayout({
 	children: React.ReactNode;
 }>) {
 	const session = await auth0.getSession();
+	console.log("session: ", session);
+
+	if (session?.user) {
+		try {
+			console.log(`${process.env.NEXT_PUBLIC_API_URL}/api/user`);
+			const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/user`, {
+				method: 'POST',
+				headers: {
+					'Content-Type': 'application/json',
+				},
+				body: JSON.stringify(session.user),
+			});
+			const user = await response.json();
+			console.log("user: ", user);
+		} catch (error) {
+			console.error("Error: ", error);
+		}
+	}
 
 	return (
 		<html lang="en">
@@ -39,8 +57,8 @@ export default async function RootLayout({
 					<Header />
 					{session && <AppSidebar />}
 					<main className="w-full pt-[60px]">
-        				{children}
-      				</main>
+						{children}
+					</main>
 				</SidebarProvider>
 			</body>
 		</html>
