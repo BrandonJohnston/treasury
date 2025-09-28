@@ -8,6 +8,13 @@ import { SidebarProvider } from "@/components/ui/sidebar";
 import { AppSidebar } from "@/components/app-sidebar/AppSidebar";
 import Header from "@/components/header/Header";
 
+interface IUserPayload {
+	email?: string;
+	name?: string;
+	provider: string;
+	provider_id: string;
+}
+
 const geistSans = Geist({
 	variable: "--font-geist-sans",
 	subsets: ["latin"],
@@ -29,18 +36,25 @@ export default async function RootLayout({
 	children: React.ReactNode;
 }>) {
 	const session = await auth0.getSession();
-	console.log("session: ", session);
 
 	if (session?.user) {
 		try {
-			console.log(`${process.env.NEXT_PUBLIC_API_URL}/api/user`);
+			const provider = session.user.sub.split("|");
+			const payload: IUserPayload = {
+				email: session.user.email,
+				name: session.user.name,
+				provider: provider[0],
+				provider_id: provider[1],
+			};
+
 			const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/user`, {
 				method: 'POST',
 				headers: {
 					'Content-Type': 'application/json',
 				},
-				body: JSON.stringify(session.user),
+				body: JSON.stringify(payload),
 			});
+			console.log("response: ", response);
 			const user = await response.json();
 			console.log("user: ", user);
 		} catch (error) {

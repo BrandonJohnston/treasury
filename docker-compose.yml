@@ -56,7 +56,7 @@ services:
         environment:
             # Add environment variables if needed, e.g., for API endpoints
             - NODE_ENV=development
-            - NEXT_PUBLIC_API_URL=http://localhost:8080
+            - NEXT_PUBLIC_API_URL=http://web-backend:8080
         networks:
             - app-network
         depends_on:

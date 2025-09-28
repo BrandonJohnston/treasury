@@ -3,16 +3,14 @@ package main
 import (
 	"log"
 	"net/http"
-	"os"
 
-	"github.com/gorilla/sessions"
 	"github.com/joho/godotenv"
 
 	"web-backend/internal/database"
-	"web-backend/internal/handler"
-	"web-backend/internal/repository"
+	"web-backend/internal/handlers"
+	"web-backend/internal/repositories"
 	"web-backend/internal/router"
-	"web-backend/internal/service"
+	"web-backend/internal/services"
 )
 
 func main() {
@@ -27,22 +25,9 @@ func main() {
 	}
 	defer db.Close()
 
-	// Create session store (secret should be from environment in production)
-	sessionKey := os.Getenv("SESSION_KEY")
-	if sessionKey == "" {
-		sessionKey = "default-insecure-key" // Fallback key (not for production!)
-	}
-	sessionStore := sessions.NewCookieStore([]byte(sessionKey))
-	sessionStore.Options = &sessions.Options{
-		Path:     "/",
-		MaxAge:   3600, // 1 hour
-		HttpOnly: true,
-		// Secure: true,	// Enable ONLY when using HTTPS
-	}
-
-	userRepo := repository.NewUserRepository(db)
-	userService := service.NewUserService(userRepo)
-	userHandler := handler.NewUserHandler(userService, sessionStore)
+	userRepo := repositories.NewUserRepository(db)
+	userService := services.NewUserService(userRepo)
+	userHandler := handlers.NewUserHandler(userService)
 
 	routes := router.SetupRoutes(userHandler)
 

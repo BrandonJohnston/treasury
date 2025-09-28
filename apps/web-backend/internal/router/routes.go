@@ -2,15 +2,18 @@ package router
 
 import (
 	"net/http"
-	"web-backend/internal/handler"
+	"web-backend/internal/handlers"
 	"web-backend/internal/middleware"
+
+	"github.com/gorilla/mux"
 )
 
-func SetupRoutes(userHandler *handler.UserHandler) http.Handler {
-	mux := http.NewServeMux()
+func SetupRoutes(userHandler *handlers.UserHandler) http.Handler {
+	r := mux.NewRouter()
 
-	mux.HandleFunc("/api/auth/login", userHandler.LoginUser)
-	mux.HandleFunc("/api/auth/userdata", userHandler.GetUserData)
+	// Define routes with specific HTTP methods
+	r.HandleFunc("/api/user", userHandler.GetUserData).Methods("GET")
+	r.HandleFunc("/api/user", userHandler.PostUserData).Methods("POST")
 
-	return middleware.CORS(mux)
+	return middleware.CORS(r)
 }
