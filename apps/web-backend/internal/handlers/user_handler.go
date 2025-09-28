@@ -89,9 +89,6 @@ func (h *UserHandler) PostUserData(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	// The data is now available in the 'data' variable!
-	fmt.Printf("Received Data: Name=%s, Email=%s, Provider=%s, ProviderID=%s\n", userData.Name, userData.Email, userData.Provider, userData.ProviderID)
-
 	// Create a response to use later
 	var response UserDataResponse
 
