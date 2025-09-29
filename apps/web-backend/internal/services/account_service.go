@@ -13,6 +13,10 @@ func NewAccountService(repo *repositories.AccountRepository) *AccountService {
 	return &AccountService{repo: repo}
 }
 
-func (s *UserService) CreateAccount(provider string) (*models.Account, error) {
-	return s.repo.CreateAccount(provider)
+func (s *AccountService) GetAccount(accountName string, userID string) (*models.Account, error) {
+	return s.repo.GetAccount(accountName, userID)
+}
+
+func (s *AccountService) CreateAccount(accountName string, userID string) (*models.Account, error) {
+	return s.repo.CreateAccount(accountName, userID)
 }

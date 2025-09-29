@@ -92,7 +92,7 @@ func (h *UserHandler) PostUserData(w http.ResponseWriter, r *http.Request) {
 	// Create a response to use later
 	var response UserDataResponse
 
-	// Check if the user already exists
+	// Check if the User already exists
 	user, err := h.service.GetUserByEmail(userData.Email, userData.ProviderID)
 	if err != nil {
 		http.Error(w, "Internal Server Error", http.StatusInternalServerError)

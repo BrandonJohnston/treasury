@@ -29,7 +29,11 @@ func main() {
 	userService := services.NewUserService(userRepo)
 	userHandler := handlers.NewUserHandler(userService)
 
-	routes := router.SetupRoutes(userHandler)
+	accountRepo := repositories.NewAccountRepository(db)
+	accountService := services.NewAccountService(accountRepo)
+	accountHandler := handlers.NewAccountHandler(accountService, userService)
+
+	routes := router.SetupRoutes(userHandler, accountHandler)
 
 	log.Println("Server starting on :8080")
 	log.Fatal(http.ListenAndServe(":8080", routes))

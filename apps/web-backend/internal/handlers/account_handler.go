@@ -13,27 +13,32 @@ import (
 )
 
 type AccountHandler struct {
-	service *services.AccountService
+	service     *services.AccountService
+	userService *services.UserService
 }
 
 type NewAccountData struct {
-	AccountName string `json:"account_name"`
+	AccountName string `json:"accountName"`
+	Email       string `json:"email"`
+	Provider    string `json:"provider"`
+	ProviderID  string `json:"providerId"`
 }
 
 type AccountDataResponse struct {
-	Status  string       `json:"status"`
-	Message string       `json:"message"`
-	User    *models.User `json:"user"`
+	Status  string          `json:"status"`
+	Message string          `json:"message"`
+	Account *models.Account `json:"account"`
 }
 
-func NewAccountHandler(service *services.AccountService) *AccountHandler {
+func NewAccountHandler(service *services.AccountService, userService *services.UserService) *AccountHandler {
 	return &AccountHandler{
-		service: service,
+		service:     service,
+		userService: userService,
 	}
 }
 
 // PostAccountData - handle new account data from frontend session
-func (h *UserHandler) PostAccountData(w http.ResponseWriter, r *http.Request) {
+func (h *AccountHandler) PostAccountData(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
 
 	// Limit the size of the request body to prevent abuse
@@ -70,6 +75,46 @@ func (h *UserHandler) PostAccountData(w http.ResponseWriter, r *http.Request) {
 
 	// Create a response to use later
 	var response AccountDataResponse
+
+	// Get the user ID first
+	user, err := h.userService.GetUserByEmail(accountData.Email, accountData.ProviderID)
+	if err != nil {
+		http.Error(w, "Internal Server Error", http.StatusInternalServerError)
+		return
+	}
+	if user == nil {
+		http.Error(w, "User not found", http.StatusNotFound)
+		return
+	}
+
+	// Check if the Account already exists
+	account, err := h.service.GetAccount(accountData.AccountName, user.ID)
+	if err != nil {
+		http.Error(w, "Internal Server Error", http.StatusInternalServerError)
+		return
+	}
+
+	if account != nil {
+		response.Status = "err"
+		response.Message = "Account already exists"
+		response.Account = account
+		json.NewEncoder(w).Encode(response)
+		return
+	}
+
+	// Create a new Account
+	newAccount, err := h.service.CreateAccount(accountData.AccountName, user.ID)
+	if err != nil {
+		http.Error(w, "Internal Server Error", http.StatusInternalServerError)
+		return
+	}
+
+	// For now, return the user data back (you can process it with your service later)
+	if newAccount != nil {
+		response.Status = "ok"
+		response.Message = "User account created successfully"
+		response.Account = newAccount
+	}
 
 	json.NewEncoder(w).Encode(response)
 }

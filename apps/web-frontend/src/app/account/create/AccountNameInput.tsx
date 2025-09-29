@@ -1,12 +1,20 @@
 "use client";
 
 import React, { useState } from "react";
+import { useRouter } from "next/navigation";
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
 
-export default function AccountNameInput() {
+interface AccountNameInputProps {
+	email?: string;
+	provider: string;
+	providerId: string;
+}
+
+export default function AccountNameInput(props: AccountNameInputProps) {
 	// Aliases
-	//
+	const { email, provider, providerId } = props;
+	const router = useRouter();
 
     const [editing, setEditing] = useState(true);
     const [accountName, setAccountName] = useState("");
@@ -36,12 +44,24 @@ export default function AccountNameInput() {
 
     const handleSave = async () => {
         console.log("saving...");
-        const response = await fetch("/api/account/create", {
+        const payload = {
+            accountName,
+            email,
+            provider,
+            providerId,
+        }
+
+        const response = await fetch("http://localhost:8080/api/accounts/create", {
             method: "POST",
-            body: JSON.stringify({ accountName }),
+            body: JSON.stringify(payload),
         });
         const data = await response.json();
         console.log(data);
+
+        if (data.status === "ok") {
+            // redirect to account page
+            router.push(`/account/${data.account.id}`);
+        }
     };
     
 	return (

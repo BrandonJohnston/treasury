@@ -8,7 +8,7 @@ import (
 	"github.com/gorilla/mux"
 )
 
-func SetupRoutes(userHandler *handlers.UserHandler) http.Handler {
+func SetupRoutes(userHandler *handlers.UserHandler, accountHandler *handlers.AccountHandler) http.Handler {
 	r := mux.NewRouter()
 
 	// Define routes with specific HTTP methods
@@ -16,7 +16,7 @@ func SetupRoutes(userHandler *handlers.UserHandler) http.Handler {
 	r.HandleFunc("/api/user", userHandler.PostUserData).Methods("POST")
 
 	// Account routes
-	r.HandleFunc("/api/account/create", accountHandler.CreateAccount).Methods("POST")
+	r.HandleFunc("/api/accounts/create", accountHandler.PostAccountData).Methods("POST")
 
 	return middleware.CORS(r)
 }
