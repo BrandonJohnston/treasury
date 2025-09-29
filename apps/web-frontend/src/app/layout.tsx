@@ -54,9 +54,8 @@ export default async function RootLayout({
 				},
 				body: JSON.stringify(payload),
 			});
-			console.log("response: ", response);
+
 			const user = await response.json();
-			console.log("user: ", user);
 		} catch (error) {
 			console.error("Error: ", error);
 		}

@@ -6,11 +6,13 @@ import {
     SidebarGroupAction,
 } from "@/components/ui/sidebar";
 import { Plus } from "lucide-react";
+import { redirect } from "next/navigation";
 
 export default function AppSidebarAccountHeader() {
 
     const handleAddAccount = () => {
         console.log("Add Account");
+        redirect("/account/create");
     }
 
     return (
