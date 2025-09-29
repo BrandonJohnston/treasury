@@ -4,6 +4,7 @@ import "./globals.css";
 
 import { auth0 } from "@/lib/auth0";
 
+import { AccountProvider } from "@/contexts/AccountContext";
 import { SidebarProvider } from "@/components/ui/sidebar";
 import { AppSidebar } from "@/components/app-sidebar/AppSidebar";
 import Header from "@/components/header/Header";
@@ -66,13 +67,15 @@ export default async function RootLayout({
 			<body
 				className={`${geistSans.variable} ${geistMono.variable} antialiased relative h-screen`}
 			>
-				<SidebarProvider>
-					<Header />
-					{session && <AppSidebar />}
-					<main className="w-full pt-[60px]">
-						{children}
-					</main>
-				</SidebarProvider>
+				<AccountProvider>
+					<SidebarProvider>
+						<Header />
+						{session && <AppSidebar />}
+						<main className="w-full pt-[60px]">
+							{children}
+						</main>
+					</SidebarProvider>
+				</AccountProvider>
 			</body>
 		</html>
 	);

@@ -5,16 +5,16 @@ import "time"
 // User represents a user in the database
 type Account struct {
 	ID          string    `json:"id" db:"id"`
-	AccountName string    `json:"account_name" db:"account_name"`
-	UserID      string    `json:"user_id" db:"user_id"`
-	CreatedAt   time.Time `json:"created_at" db:"created_at"`
-	UpdatedAt   time.Time `json:"updated_at" db:"updated_at"`
+	AccountName string    `json:"accountName" db:"account_name"`
+	UserID      string    `json:"userId" db:"user_id"`
+	CreatedAt   time.Time `json:"createdAt" db:"created_at"`
+	UpdatedAt   time.Time `json:"updatedAt" db:"updated_at"`
 }
 
 // CreateUserRequest represents the structure for creating a new user
 type CreateAccountRequest struct {
-	AccountName string `json:"account_name" db:"account_name"`
+	AccountName string `json:"accountName" db:"account_name"`
 	Email       string `json:"email" db:"email"`
 	Provider    string `json:"provider" db:"provider"`
-	ProviderID  string `json:"provider_id" db:"provider_id"`
+	ProviderID  string `json:"providerId" db:"provider_id"`
 }

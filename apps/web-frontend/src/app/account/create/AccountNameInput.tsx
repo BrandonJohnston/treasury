@@ -4,6 +4,7 @@ import React, { useState } from "react";
 import { useRouter } from "next/navigation";
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
+import { useAccounts } from "@/contexts/AccountContext";
 
 interface AccountNameInputProps {
 	email?: string;
@@ -15,6 +16,7 @@ export default function AccountNameInput(props: AccountNameInputProps) {
 	// Aliases
 	const { email, provider, providerId } = props;
 	const router = useRouter();
+	const { addAccount, refreshAccounts } = useAccounts();
 
     const [editing, setEditing] = useState(true);
     const [accountName, setAccountName] = useState("");
@@ -59,6 +61,16 @@ export default function AccountNameInput(props: AccountNameInputProps) {
         console.log(data);
 
         if (data.status === "ok") {
+            console.log("calling addAccount()");
+            // Add the new account to the context
+            addAccount({
+                id: data.account.id,
+                accountName: data.account.accountName
+            });
+            
+            // Refresh accounts data
+            await refreshAccounts();
+            
             // redirect to account page
             router.push(`/account/${data.account.id}`);
         }
