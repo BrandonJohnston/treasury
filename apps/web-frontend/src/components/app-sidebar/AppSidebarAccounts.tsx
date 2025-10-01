@@ -10,7 +10,7 @@ import {
     SidebarMenuItem,
     SidebarMenuButton,
 } from "@/components/ui/sidebar";
-import { Plus } from "lucide-react";
+import { Plus, Landmark } from "lucide-react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { useAccounts } from "@/contexts/AccountContext";
@@ -24,8 +24,6 @@ export default function AppSidebarAccounts(props: AppSidebarAccountsProps) {
     const { accountsData } = props;
     const router = useRouter();
     const { accounts, setAccountsData } = useAccounts();
-
-    console.log("accounts", accounts);
 
     const handleAddAccount = () => {
         router.push("/account/create");
@@ -47,6 +45,7 @@ export default function AppSidebarAccounts(props: AppSidebarAccountsProps) {
                         <SidebarMenuItem key={account.id}>
                             <SidebarMenuButton asChild>
                                 <Link href={`/account/${account.id}`} className="w-full">
+                                    <Landmark />
                                     <span>{account.accountName}</span>
                                 </Link>
                             </SidebarMenuButton>

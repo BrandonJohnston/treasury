@@ -35,4 +35,4 @@ CREATE TRIGGER update_users_updated_at
 
 -- Insert initial user data (for development/testing)
 INSERT INTO users (provider, provider_id, email, name) VALUES
-    ('google-oauth2', '113134860670558946522', 'test@test.com', 'Treasury Admin');
+    ('google-oauth2', '113134860670558946521', 'brandon.johnston83@gmail.com', 'Brandon Johnston');

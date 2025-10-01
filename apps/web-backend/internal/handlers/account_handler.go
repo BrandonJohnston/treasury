@@ -31,9 +31,9 @@ type AccountDataResponse struct {
 }
 
 type GetAccountsResponse struct {
-	Status   string               `json:"status"`
-	Message  string               `json:"message"`
-	Accounts []models.AccountInfo `json:"accounts"`
+	Status   string           `json:"status"`
+	Message  string           `json:"message"`
+	Accounts []models.Account `json:"accounts"`
 }
 
 func NewAccountHandler(service *services.AccountService, userService *services.UserService) *AccountHandler {
@@ -57,7 +57,7 @@ func (h *AccountHandler) GetAccounts(w http.ResponseWriter, r *http.Request) {
 		response := GetAccountsResponse{
 			Status:   "error",
 			Message:  "Missing required query parameters: email, provider, provider_id",
-			Accounts: []models.AccountInfo{},
+			Accounts: []models.Account{},
 		}
 		json.NewEncoder(w).Encode(response)
 		return
@@ -69,7 +69,7 @@ func (h *AccountHandler) GetAccounts(w http.ResponseWriter, r *http.Request) {
 		response := GetAccountsResponse{
 			Status:   "error",
 			Message:  "Internal Server Error",
-			Accounts: []models.AccountInfo{},
+			Accounts: []models.Account{},
 		}
 		json.NewEncoder(w).Encode(response)
 		return
@@ -79,7 +79,7 @@ func (h *AccountHandler) GetAccounts(w http.ResponseWriter, r *http.Request) {
 		response := GetAccountsResponse{
 			Status:   "error",
 			Message:  "User not found",
-			Accounts: []models.AccountInfo{},
+			Accounts: []models.Account{},
 		}
 		json.NewEncoder(w).Encode(response)
 		return

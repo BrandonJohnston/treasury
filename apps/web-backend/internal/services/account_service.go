@@ -17,21 +17,22 @@ func (s *AccountService) GetAccount(accountName string, userID string) (*models.
 	return s.repo.GetAccount(accountName, userID)
 }
 
-func (s *AccountService) GetAccounts(userID string) ([]models.AccountInfo, error) {
+func (s *AccountService) GetAccounts(userID string) ([]models.Account, error) {
 	accounts, err := s.repo.GetAccounts(userID)
 	if err != nil {
 		return nil, err
 	}
 
 	// Convert []*models.Account to []models.AccountInfo
-	accountInfos := make([]models.AccountInfo, len(accounts))
+	accountInfos := make([]models.Account, len(accounts))
 	for i, account := range accounts {
-		accountInfos[i] = models.AccountInfo{
-			ID:          account.ID,
-			AccountName: account.AccountName,
-			UserID:      account.UserID,
-			CreatedAt:   account.CreatedAt.Format("2006-01-02T15:04:05Z"),
-			UpdatedAt:   account.UpdatedAt.Format("2006-01-02T15:04:05Z"),
+		accountInfos[i] = models.Account{
+			ID:           account.ID,
+			AccountName:  account.AccountName,
+			UserID:       account.UserID,
+			TotalBalance: account.TotalBalance,
+			CreatedAt:    account.CreatedAt,
+			UpdatedAt:    account.UpdatedAt,
 		}
 	}
 

@@ -9,7 +9,8 @@ DROP TABLE IF EXISTS accounts CASCADE;
 CREATE TABLE accounts (
     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
     account_name VARCHAR(255) NOT NULL,
-    user_id VARCHAR(255) NOT NULL,
+    user_id UUID NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+    total_balance DECIMAL(10, 2) NOT NULL,
     created_at TIMESTAMP DEFAULT NOW() NOT NULL,
     updated_at TIMESTAMP DEFAULT NOW() NOT NULL
 );
@@ -32,5 +33,8 @@ CREATE TRIGGER update_accounts_updated_at
     EXECUTE FUNCTION update_updated_at_column();
 
 -- Insert initial account data (for development/testing)
-INSERT INTO accounts (account_name, user_id) VALUES
-    ('Treasury Admin', '113134860670558946522');
+-- Get the user ID for brandon.johnston83@gmail.com and create an account
+INSERT INTO accounts (account_name, user_id, total_balance) 
+SELECT 'Business Checking - Card Shop', id, 0.00
+FROM users 
+WHERE email = 'brandon.johnston83@gmail.com';
