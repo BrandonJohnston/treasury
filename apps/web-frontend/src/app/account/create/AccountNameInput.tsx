@@ -16,7 +16,7 @@ export default function AccountNameInput(props: AccountNameInputProps) {
 	// Aliases
 	const { email, provider, providerId } = props;
 	const router = useRouter();
-	const { addAccount, refreshAccounts } = useAccounts();
+	const { addAccount } = useAccounts();
 
     const [editing, setEditing] = useState(true);
     const [accountName, setAccountName] = useState("");
@@ -63,13 +63,7 @@ export default function AccountNameInput(props: AccountNameInputProps) {
         if (data.status === "ok") {
             console.log("calling addAccount()");
             // Add the new account to the context
-            addAccount({
-                id: data.account.id,
-                accountName: data.account.accountName
-            });
-            
-            // Refresh accounts data
-            await refreshAccounts();
+            addAccount(data.account);
             
             // redirect to account page
             router.push(`/account/${data.account.id}`);

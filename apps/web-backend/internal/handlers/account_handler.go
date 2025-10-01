@@ -30,11 +30,76 @@ type AccountDataResponse struct {
 	Account *models.Account `json:"account"`
 }
 
+type GetAccountsResponse struct {
+	Status   string               `json:"status"`
+	Message  string               `json:"message"`
+	Accounts []models.AccountInfo `json:"accounts"`
+}
+
 func NewAccountHandler(service *services.AccountService, userService *services.UserService) *AccountHandler {
 	return &AccountHandler{
 		service:     service,
 		userService: userService,
 	}
+}
+
+// GetAccounts - handle GET requests for all accounts data
+func (h *AccountHandler) GetAccounts(w http.ResponseWriter, r *http.Request) {
+	w.Header().Set("Content-Type", "application/json")
+
+	// Extract query parameters
+	email := r.URL.Query().Get("email")
+	provider := r.URL.Query().Get("provider")
+	providerID := r.URL.Query().Get("provider_id")
+
+	// Validate required parameters
+	if email == "" || provider == "" || providerID == "" {
+		response := GetAccountsResponse{
+			Status:   "error",
+			Message:  "Missing required query parameters: email, provider, provider_id",
+			Accounts: []models.AccountInfo{},
+		}
+		json.NewEncoder(w).Encode(response)
+		return
+	}
+
+	// Get the user ID first
+	user, err := h.userService.GetUserByEmail(email, providerID)
+	if err != nil {
+		response := GetAccountsResponse{
+			Status:   "error",
+			Message:  "Internal Server Error",
+			Accounts: []models.AccountInfo{},
+		}
+		json.NewEncoder(w).Encode(response)
+		return
+	}
+
+	if user == nil {
+		response := GetAccountsResponse{
+			Status:   "error",
+			Message:  "User not found",
+			Accounts: []models.AccountInfo{},
+		}
+		json.NewEncoder(w).Encode(response)
+		return
+	}
+
+	// Get the accounts for the user
+	accounts, err := h.service.GetAccounts(user.ID)
+	if err != nil {
+		http.Error(w, "Internal Server Error", http.StatusInternalServerError)
+		return
+	}
+
+	// For now, return a simple response (you can implement actual account data retrieval)
+	response := GetAccountsResponse{
+		Message:  "Account data retrieved successfully",
+		Status:   "ok",
+		Accounts: accounts,
+	}
+
+	json.NewEncoder(w).Encode(response)
 }
 
 // PostAccountData - handle new account data from frontend session

@@ -18,3 +18,12 @@ type CreateAccountRequest struct {
 	Provider    string `json:"provider" db:"provider"`
 	ProviderID  string `json:"providerId" db:"provider_id"`
 }
+
+// AccountInfo represents account information for API responses
+type AccountInfo struct {
+	ID          string `json:"id"`
+	AccountName string `json:"accountName"`
+	UserID      string `json:"userId"`
+	CreatedAt   string `json:"createdAt"`
+	UpdatedAt   string `json:"updatedAt"`
+}

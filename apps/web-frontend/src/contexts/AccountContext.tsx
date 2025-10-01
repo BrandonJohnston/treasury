@@ -2,39 +2,29 @@
 
 import React, { createContext, useContext, useState, useEffect } from 'react';
 
-interface Account {
-    id: string;
-    accountName: string;
-    // Add other account properties as needed
-}
+import { IAccount } from "@/types/Accounts";
 
 interface AccountContextType {
-    accounts: Account[];
-    refreshAccounts: () => Promise<void>;
-    addAccount: (account: Account) => void;
+    accounts: IAccount[];
+    setAccountsData: (accounts: IAccount[]) => Promise<void>;
+    addAccount: (account: IAccount) => void;
 }
 
 const AccountContext = createContext<AccountContextType | undefined>(undefined);
 
 export function AccountProvider({ children }: { children: React.ReactNode }) {
-    const [accounts, setAccounts] = useState<Account[]>([]);
+    const [accounts, setAccounts] = useState<IAccount[]>([]);
 
-    const refreshAccounts = async () => {
-        // TODO: Replace with actual API call when backend is ready
-        console.log('Refreshing accounts...');
-        // For now, just log - you can add actual API call here later
+    const setAccountsData = async (accounts: IAccount[]) => {
+        setAccounts(accounts);
     };
 
-    const addAccount = (account: Account) => {
+    const addAccount = (account: IAccount) => {
         setAccounts(prev => [...prev, account]);
     };
 
-    useEffect(() => {
-        refreshAccounts();
-    }, []);
-
     return (
-        <AccountContext.Provider value={{ accounts, refreshAccounts, addAccount }}>
+        <AccountContext.Provider value={{ accounts, setAccountsData, addAccount }}>
             {children}
         </AccountContext.Provider>
     );
