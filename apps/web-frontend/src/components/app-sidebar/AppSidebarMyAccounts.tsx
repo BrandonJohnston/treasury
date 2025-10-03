@@ -16,11 +16,11 @@ import Link from "next/link";
 import { useAccounts } from "@/contexts/AccountContext";
 import { IAccount } from "@/types/Accounts";
 
-interface AppSidebarAccountsProps {
+interface AppSidebarMyAccountsProps {
     accountsData: IAccount[];
 }
 
-export default function AppSidebarAccounts(props: AppSidebarAccountsProps) {
+export default function AppSidebarMyAccounts(props: AppSidebarMyAccountsProps) {
     const { accountsData } = props;
     const router = useRouter();
     const { accounts, setAccountsData } = useAccounts();
@@ -35,7 +35,7 @@ export default function AppSidebarAccounts(props: AppSidebarAccountsProps) {
 
     return (
         <SidebarGroup>
-            <SidebarGroupLabel>Accounts</SidebarGroupLabel>
+            <SidebarGroupLabel>My Accounts</SidebarGroupLabel>
             <SidebarGroupAction title="Add Account" onClick={handleAddAccount}>
                 <Plus /> <span className="sr-only">Add Account</span>
             </SidebarGroupAction>

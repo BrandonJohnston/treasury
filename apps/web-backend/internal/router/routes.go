@@ -18,6 +18,7 @@ func SetupRoutes(userHandler *handlers.UserHandler, accountHandler *handlers.Acc
 	// Account routes
 	r.HandleFunc("/api/accounts/create", accountHandler.PostAccountData).Methods("POST")
 	r.HandleFunc("/api/accounts", accountHandler.GetAccounts).Methods("GET")
+	r.HandleFunc("/api/accounts/{id}", accountHandler.GetAccountDetails).Methods("GET")
 
 	return middleware.CORS(r)
 }

@@ -47,7 +47,7 @@ BEGIN
     IF TG_OP = 'DELETE' THEN
         account_uuid := OLD.account_id;
         -- For deletions, reverse the transaction effect
-        IF OLD.transaction_type = 'credit' THEN
+        IF OLD.transaction_type = 'income' THEN
             balance_change := -OLD.amount; -- Remove credit
         ELSE
             balance_change := OLD.amount; -- Remove debit (add back)
@@ -56,7 +56,7 @@ BEGIN
         account_uuid := NEW.account_id;
         -- For insertions and updates, calculate the net effect
         IF TG_OP = 'INSERT' THEN
-            IF NEW.transaction_type = 'credit' THEN
+            IF NEW.transaction_type = 'income' THEN
                 balance_change := NEW.amount;
             ELSE
                 balance_change := -NEW.amount;
@@ -68,14 +68,14 @@ BEGIN
                 new_effect DECIMAL(10, 2);
             BEGIN
                 -- Calculate old effect
-                IF OLD.transaction_type = 'credit' THEN
+                IF OLD.transaction_type = 'income' THEN
                     old_effect := OLD.amount;
                 ELSE
                     old_effect := -OLD.amount;
                 END IF;
                 
                 -- Calculate new effect
-                IF NEW.transaction_type = 'credit' THEN
+                IF NEW.transaction_type = 'income' THEN
                     new_effect := NEW.amount;
                 ELSE
                     new_effect := -NEW.amount;
@@ -116,3 +116,24 @@ CREATE TRIGGER trigger_update_balance_on_delete
     AFTER DELETE ON transactions
     FOR EACH ROW
     EXECUTE FUNCTION update_account_balance();
+
+-- Insert 5 fake transactions for testing
+-- Note: These will be inserted for the first account found in the accounts table
+INSERT INTO transactions (account_id, amount, transaction_type, description, transaction_date) 
+SELECT 
+    a.id,
+    t.amount,
+    t.transaction_type,
+    t.description,
+    t.transaction_date
+FROM (
+    VALUES 
+        (150.00, 'income', 'Salary deposit', '2024-01-15 09:00:00'::timestamp),
+        (25.50, 'expense', 'Coffee shop purchase', '2024-01-15 14:30:00'::timestamp),
+        (89.99, 'expense', 'Online shopping', '2024-01-16 20:15:00'::timestamp),
+        (200.00, 'income', 'Freelance payment', '2024-01-17 11:45:00'::timestamp),
+        (45.00, 'expense', 'Grocery shopping', '2024-01-18 16:20:00'::timestamp)
+) AS t(amount, transaction_type, description, transaction_date)
+CROSS JOIN (
+    SELECT id FROM accounts LIMIT 1
+) AS a;

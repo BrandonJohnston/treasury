@@ -19,3 +19,19 @@ type CreateAccountRequest struct {
 	Provider    string `json:"provider" db:"provider"`
 	ProviderID  string `json:"providerId" db:"provider_id"`
 }
+
+type Transaction struct {
+	ID              string    `json:"id" db:"id"`
+	AccountID       string    `json:"accountId" db:"account_id"`
+	Amount          string    `json:"amount" db:"amount"`
+	Date            time.Time `json:"date" db:"date"`
+	TransactionType string    `json:"transactionType" db:"transaction_type"`
+	Description     string    `json:"description" db:"description"`
+	CreatedAt       time.Time `json:"createdAt" db:"created_at"`
+	UpdatedAt       time.Time `json:"updatedAt" db:"updated_at"`
+}
+
+type AccountDetails struct {
+	Account
+	Transactions []Transaction `json:"transactions" db:"transactions"`
+}

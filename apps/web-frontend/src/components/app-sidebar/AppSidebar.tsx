@@ -13,7 +13,7 @@ import {
 import { LayoutDashboard } from "lucide-react";
 
 import { auth0 } from "@/lib/auth0";
-import AppSidebarAccounts from "./AppSidebarAccounts";
+import AppSidebarMyAccounts from "./AppSidebarMyAccounts";
 import AppSidebarFooter from "./AppSidebarFooter";
 
 import { IAccount } from "@/types/Accounts";
@@ -62,7 +62,6 @@ export async function AppSidebar() {
 			});
 
 			const data = await response.json();
-			console.log(data);
 
             // Save accounts to context
             accounts.push(...data.accounts);
@@ -92,7 +91,10 @@ export async function AppSidebar() {
                         </SidebarMenu>
                     </SidebarGroupContent>
                 </SidebarGroup>
-                <AppSidebarAccounts accountsData={accounts} />
+                <AppSidebarMyAccounts accountsData={accounts} />
+                <SidebarGroup>
+                    <SidebarGroupLabel>Shared Accounts</SidebarGroupLabel>
+                </SidebarGroup>
             </SidebarContent>
             
             <AppSidebarFooter />

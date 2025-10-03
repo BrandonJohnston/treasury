@@ -6,10 +6,13 @@ import (
 	"encoding/json"
 	"fmt"
 	"io"
+	"log"
 	"net/http"
 
 	"web-backend/internal/models"
 	"web-backend/internal/services"
+
+	"github.com/gorilla/mux"
 )
 
 type AccountHandler struct {
@@ -34,6 +37,10 @@ type GetAccountsResponse struct {
 	Status   string           `json:"status"`
 	Message  string           `json:"message"`
 	Accounts []models.Account `json:"accounts"`
+}
+
+type GetAccountDetailsResponse struct {
+	models.AccountDetails
 }
 
 func NewAccountHandler(service *services.AccountService, userService *services.UserService) *AccountHandler {
@@ -179,6 +186,73 @@ func (h *AccountHandler) PostAccountData(w http.ResponseWriter, r *http.Request)
 		response.Status = "ok"
 		response.Message = "User account created successfully"
 		response.Account = newAccount
+	}
+
+	json.NewEncoder(w).Encode(response)
+}
+
+// GetAccountDetails - handle GET requests for account details
+func (h *AccountHandler) GetAccountDetails(w http.ResponseWriter, r *http.Request) {
+	w.Header().Set("Content-Type", "application/json")
+
+	// Extract the account ID from the URL
+	accountID := mux.Vars(r)["id"]
+	log.Println("accountID: ", accountID)
+
+	// Extract query parameters
+	email := r.URL.Query().Get("email")
+	provider := r.URL.Query().Get("provider")
+	providerID := r.URL.Query().Get("provider_id")
+
+	log.Println("email: ", email)
+	log.Println("provider: ", provider)
+	log.Println("providerID: ", providerID)
+
+	// Validate required parameters
+	if email == "" || provider == "" || providerID == "" {
+		response := GetAccountsResponse{
+			Status:   "error",
+			Message:  "Missing required query parameters: email, provider, provider_id",
+			Accounts: []models.Account{},
+		}
+		json.NewEncoder(w).Encode(response)
+		return
+	}
+
+	// Get the user ID first
+	user, err := h.userService.GetUserByEmail(email, providerID)
+	if err != nil {
+		response := GetAccountsResponse{
+			Status:   "error",
+			Message:  "Internal Server Error",
+			Accounts: []models.Account{},
+		}
+		json.NewEncoder(w).Encode(response)
+		return
+	}
+
+	if user == nil {
+		response := GetAccountsResponse{
+			Status:   "error",
+			Message:  "User not found",
+			Accounts: []models.Account{},
+		}
+		json.NewEncoder(w).Encode(response)
+		return
+	}
+
+	// Get the account details
+	account, err := h.service.GetAccountByID(accountID, user.ID)
+
+	if err != nil {
+		http.Error(w, "Internal Server Error", http.StatusInternalServerError)
+		return
+	}
+
+	// Get the account transactions
+
+	response := GetAccountDetailsResponse{
+		AccountDetails: *account,
 	}
 
 	json.NewEncoder(w).Encode(response)

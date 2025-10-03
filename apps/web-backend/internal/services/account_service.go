@@ -39,6 +39,11 @@ func (s *AccountService) GetAccounts(userID string) ([]models.Account, error) {
 	return accountInfos, nil
 }
 
+// GetAccountByID retrieves an account by id
+func (s *AccountService) GetAccountByID(accountID string, userID string) (*models.AccountDetails, error) {
+	return s.repo.GetAccountById(accountID, userID)
+}
+
 func (s *AccountService) CreateAccount(accountName string, userID string) (*models.Account, error) {
 	return s.repo.CreateAccount(accountName, userID)
 }
